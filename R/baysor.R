@@ -1,3 +1,4 @@
+
 try_cmd = function(cmd, attempts_left, verbose=FALSE) {
     if (attempts_left==0) {
         msg = glue::glue('Failed to run {cmd}.')
@@ -22,7 +23,7 @@ try_cmd = function(cmd, attempts_left, verbose=FALSE) {
 }
 
 
-
+#' @export 
 baysor.collect_tx = function(dir) {
     tx <- list.files(dir, pattern = "segmentation.csv$", recursive = TRUE, full.names = TRUE) %>% 
         purrr::map(data.table::fread) %>% data.table::rbindlist(idcol = "tile")
@@ -54,7 +55,8 @@ baysor.collect_tx = function(dir) {
     # tx[, `:=`(N, sum(!grepl("Blank", gene))), by = cell][, `:=`(cell, case_when(N >= mintx ~ cell, TRUE ~ 0L))] ## OLD OPTION: MIN TRANSCRIPTS
     return(tx)
 }
-    
+
+#' @export 
 baysor.read_shapes = function(dir) {
     fnames = list.files(dir, pattern='segmentation_polygons.json', recursive=TRUE, full.names=TRUE)
     json_list = fnames %>% purrr::map(jsonlite::read_json) %>% purrr::map('geometries')
@@ -84,7 +86,8 @@ mean_hex = function(str) {
         sprintf('%02X', as.integer(mean(as.hexmode(substr(str, 6, 7)))))
     )    
 }
-
+                        
+#' @export 
 baysor.collect_cells = function(dir, no_ncv_estimation) {
     cells = sf::st_sf(shape=baysor.read_shapes(dir))
     cells = cbind(cells, sf::st_coordinates(sf::st_centroid(cells$shape))) %>% dplyr::rename(x = X, y = Y)
@@ -119,7 +122,7 @@ baysor.collect_cells = function(dir, no_ncv_estimation) {
     cells = cbind(cells, cell_summary) 
     return(cells)    
 }
-
+#' @export 
 baysor.finish = function(remove_temp_files) {
     if (remove_temp_files) {
         for (fname in list.files(output_dir, full.names = TRUE)) {
