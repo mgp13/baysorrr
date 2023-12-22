@@ -1,3 +1,4 @@
+#' @export 
 split_tx_files <- function(output_dir, max_tx_per_grid) {
     ## Check if dir exists
     if (!dir.exists(output_dir)) {
